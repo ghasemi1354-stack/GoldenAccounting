@@ -160,3 +160,4 @@ CREATE TABLE warehouse_transactions (
         FOREIGN KEY(warehouse_id)
         REFERENCES warehouses(id)
 );
+
