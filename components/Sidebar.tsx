@@ -2,70 +2,84 @@ import Link from "next/link";
 
 export default function Sidebar() {
 
-return (
+  return (
 
-<aside className="p-6 bg-gray-100 min-h-screen">
+    <aside className="p-6 bg-gray-100 min-h-screen">
 
-
-  <h2 className="text-xl font-bold mb-8">
-    Golden Accounting
-  </h2>
-
-
-  <nav className="flex flex-col gap-4">
+      <h2 className="text-xl font-bold mb-8">
+        Golden Accounting
+      </h2>
 
 
-    <Link href="/dashboard">
-      داشبورد
-    </Link>
+      <nav className="flex flex-col gap-4">
 
 
-    <Link href="/dashboard/products">
-      کالاها
-    </Link>
+        <Link href="/dashboard">
+          داشبورد
+        </Link>
 
 
-    <Link href="/dashboard/warehouses">
-      انبارها
-    </Link>
+
+        <Link href="/dashboard/products">
+          کالاها
+        </Link>
 
 
-    <hr />
+
+        <Link href="/dashboard/warehouses">
+          انبارها
+        </Link>
 
 
-    <span className="font-bold">
-      عملیات انبار
-    </span>
+
+        <hr />
 
 
-    <Link href="/dashboard/inventory">
-      موجودی انبار
-    </Link>
+
+        <span className="font-bold">
+          عملیات انبار
+        </span>
 
 
-    <Link href="/dashboard/inventory/in">
-      ورود کالا
-    </Link>
+
+        <Link href="/dashboard/inventory">
+          موجودی انبار
+        </Link>
 
 
-    <Link href="/dashboard/inventory/out">
-      خروج کالا
-    </Link>
+
+        <Link href="/dashboard/inventory/in">
+          ورود کالا
+        </Link>
 
 
-    <hr />
+
+        <Link href="/dashboard/inventory/out">
+          خروج کالا
+        </Link>
 
 
-    <Link href="/dashboard/users">
-      کاربران
-    </Link>
+
+        <Link href="/dashboard/inventory/transfer">
+          انتقال کالا
+        </Link>
 
 
-  </nav>
+
+        <hr />
 
 
-</aside>
 
-);
+        <Link href="/dashboard/users">
+          کاربران
+        </Link>
+
+
+      </nav>
+
+
+    </aside>
+
+  );
 
 }
