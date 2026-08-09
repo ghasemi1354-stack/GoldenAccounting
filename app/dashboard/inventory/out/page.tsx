@@ -1,0 +1,70 @@
+import InventoryOutForm from "./InventoryOutForm";
+import sql from "@/lib/db";
+
+
+async function getProducts(){
+
+  const products = await sql`
+
+    SELECT
+      id,
+      name
+    FROM products
+    WHERE is_active = true
+    ORDER BY name
+
+  `;
+
+  return products;
+
+}
+
+
+
+async function getWarehouses(){
+
+  const warehouses = await sql`
+
+    SELECT
+      id,
+      name
+    FROM warehouses
+    ORDER BY name
+
+  `;
+
+  return warehouses;
+
+}
+
+
+
+export default async function InventoryOutPage(){
+
+  const products = await getProducts();
+
+  const warehouses = await getWarehouses();
+
+
+  return (
+
+    <div>
+
+      <h1 className="text-2xl font-bold mb-6">
+        خروج کالا از انبار
+      </h1>
+
+
+      <InventoryOutForm
+
+        products={products}
+
+        warehouses={warehouses}
+
+      />
+
+    </div>
+
+  );
+
+}

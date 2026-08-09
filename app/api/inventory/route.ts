@@ -11,20 +11,82 @@ export async function POST(request: Request) {
     const {
       product_id,
       warehouse_id,
-      quantity
+      quantity,
+      transaction_type
     } = body;
 
 
-    if (!product_id || !warehouse_id || !quantity) {
+    if (!product_id || !warehouse_id || !quantity || !transaction_type) {
 
       return NextResponse.json(
         {
           error: "اطلاعات ناقص است"
         },
         {
-          status:400
+          status: 400
         }
       );
+
+    }
+
+
+    if (!["IN", "OUT"].includes(transaction_type)) {
+
+      return NextResponse.json(
+        {
+          error: "نوع تراکنش نامعتبر است"
+        },
+        {
+          status: 400
+        }
+      );
+
+    }
+
+
+    if (transaction_type === "OUT") {
+
+
+      const stock = await sql`
+
+        SELECT
+
+        COALESCE(
+          SUM(
+            CASE
+
+            WHEN transaction_type = 'IN'
+            THEN quantity
+
+            WHEN transaction_type = 'OUT'
+            THEN -quantity
+
+            END
+          ),0
+        ) AS quantity
+
+
+        FROM warehouse_transactions
+
+        WHERE product_id = ${product_id}
+
+        AND warehouse_id = ${warehouse_id}
+
+      `;
+
+
+      if (Number(stock[0].quantity) < Number(quantity)) {
+
+        return NextResponse.json(
+          {
+            error:"موجودی کافی نیست"
+          },
+          {
+            status:400
+          }
+        );
+
+      }
 
     }
 
@@ -44,7 +106,7 @@ export async function POST(request: Request) {
       (
         ${product_id},
         ${warehouse_id},
-        'IN',
+        ${transaction_type},
         ${quantity}
       )
 
@@ -53,7 +115,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        message:"Inventory entry created"
+        message:"Inventory transaction created"
       },
       {
         status:201
@@ -63,7 +125,9 @@ export async function POST(request: Request) {
 
   } catch(error){
 
+
     console.error(error);
+
 
     return NextResponse.json(
       {
