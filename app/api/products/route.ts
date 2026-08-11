@@ -1,15 +1,20 @@
-import sql from "@/lib/db";
 import { NextResponse } from "next/server";
+import sql from "@/lib/db";
 
 
-export async function POST(request: Request) {
+
+export async function POST(req:Request){
+
 
   try {
 
-    const body = await request.json();
+
+    const body = await req.json();
+
 
 
     const {
+
       code,
       barcode,
       name,
@@ -17,11 +22,16 @@ export async function POST(request: Request) {
       unit_id,
       purchase_price,
       sale_price
+
     } = body;
 
 
+
+
     const result = await sql`
+
       INSERT INTO products
+
       (
         code,
         barcode,
@@ -32,7 +42,10 @@ export async function POST(request: Request) {
         sale_price,
         is_active
       )
+
+
       VALUES
+
       (
         ${code},
         ${barcode},
@@ -43,26 +56,40 @@ export async function POST(request: Request) {
         ${sale_price},
         true
       )
+
+
       RETURNING *
+
     `;
+
 
 
     return NextResponse.json(result[0]);
 
 
-  } catch (error) {
+
+  }
+
+
+  catch(error){
+
 
     console.error(error);
 
+
     return NextResponse.json(
+
       {
-        error: "خطا در ثبت کالا"
+        error:"خطا در ثبت کالا"
       },
+
       {
-        status: 500
+        status:500
       }
+
     );
 
   }
+
 
 }

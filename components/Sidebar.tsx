@@ -1,85 +1,218 @@
 import Link from "next/link";
-
-export default function Sidebar() {
-
-  return (
-
-    <aside className="p-6 bg-gray-100 min-h-screen">
-
-      <h2 className="text-xl font-bold mb-8">
-        Golden Accounting
-      </h2>
+import { getCurrentUser } from "@/lib/auth/currentUser";
+import { hasPermission } from "@/lib/auth/permissions";
 
 
-      <nav className="flex flex-col gap-4">
+export default async function Sidebar(){
 
 
-        <Link href="/dashboard">
-          داشبورد
-        </Link>
+const user = await getCurrentUser();
+
+
+if(!user)
+return null;
 
 
 
-        <Link href="/dashboard/products">
-          کالاها
-        </Link>
+const canUsers =
+await hasPermission(
+user.id,
+"users.view"
+);
 
 
 
-        <Link href="/dashboard/warehouses">
-          انبارها
-        </Link>
+return (
+
+<aside
+className="
+w-72
+min-h-screen
+bg-[#0f172a]
+text-white
+p-6
+shadow-xl
+"
+>
+
+
+<div className="mb-10">
+
+
+<h1
+className="
+text-2xl
+font-bold
+text-[#60CDFF]
+"
+>
+GoldenAccounting
+</h1>
+
+
+<p
+className="
+text-xs
+text-gray-400
+mt-2
+"
+>
+سیستم حسابداری و انبارداری
+</p>
+
+
+</div>
 
 
 
-        <hr />
+<nav
+className="
+flex
+flex-col
+gap-2
+"
+>
 
 
 
-        <span className="font-bold">
-          عملیات انبار
-        </span>
+<Link
+href="/dashboard"
+className="
+px-4 py-3 rounded-lg
+hover:bg-[#0078D4]
+transition
+"
+>
+🏠 داشبورد
+</Link>
 
 
 
-        <Link href="/dashboard/inventory">
-          موجودی انبار
-        </Link>
+<Link
+href="/dashboard/products"
+className="
+px-4 py-3 rounded-lg
+hover:bg-[#0078D4]
+transition
+"
+>
+📦 کالاها
+</Link>
 
 
 
-        <Link href="/dashboard/inventory/in">
-          ورود کالا
-        </Link>
+
+<Link
+href="/dashboard/warehouses"
+className="
+px-4 py-3 rounded-lg
+hover:bg-[#0078D4]
+transition
+"
+>
+🏬 انبارها
+</Link>
 
 
 
-        <Link href="/dashboard/inventory/out">
-          خروج کالا
-        </Link>
+
+<hr
+className="
+border-gray-700
+my-4
+"
+/>
 
 
 
-        <Link href="/dashboard/inventory/transfer">
-          انتقال کالا
-        </Link>
+
+<span
+className="
+text-sm
+text-gray-400
+px-4
+"
+>
+عملیات انبار
+</span>
 
 
 
-        <hr />
+<Link
+href="/dashboard/inventory/in"
+className="
+px-4 py-3 rounded-lg
+hover:bg-[#0078D4]
+transition
+"
+>
+⬇ ورود کالا
+</Link>
+
+
+<Link
+href="/dashboard/inventory/out"
+className="
+px-4 py-3 rounded-lg
+hover:bg-[#0078D4]
+transition
+"
+>
+⬆ خروج کالا
+</Link>
+
+
+<Link
+href="/dashboard/inventory/transfer"
+className="
+px-4 py-3 rounded-lg
+hover:bg-[#0078D4]
+transition
+"
+>
+🔄 انتقال کالا
+</Link>
 
 
 
-        <Link href="/dashboard/users">
-          کاربران
-        </Link>
+{
+canUsers &&
+
+<>
+
+<hr
+className="
+border-gray-700
+my-4
+"
+/>
 
 
-      </nav>
+<Link
+href="/dashboard/users"
+className="
+px-4 py-3 rounded-lg
+hover:bg-[#0078D4]
+transition
+"
+>
+👥 کاربران
+</Link>
 
 
-    </aside>
+</>
 
-  );
+}
+
+
+
+</nav>
+
+
+</aside>
+
+
+);
+
 
 }

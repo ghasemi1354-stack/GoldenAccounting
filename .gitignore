@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# Project Audit
+GoldenAccounting-Audit/
+golden-accounting-audit.txt
+
+# Audit scripts
+project-audit.bat
+project-audit.ps1
+project-audit-split.bat

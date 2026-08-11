@@ -1,91 +1,231 @@
-import { NextResponse } from "next/server";
 import sql from "@/lib/db";
+import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import { createSession } from "@/lib/auth/session";
+
+
 
 export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-
-    const { username, password } = body;
-
-    if (!username || !password) {
-      return NextResponse.json(
-        {
-          message: "نام کاربری و رمز عبور الزامی است",
-        },
-        {
-          status: 400,
-        }
-      );
-    }
-
-    const users = await sql`
-      SELECT
-        id,
-        username,
-        password_hash,
-        full_name,
-        role_id
-      FROM users
-      WHERE username = ${username}
-      AND is_active = true
-    `;
-
-    if (users.length === 0) {
-      return NextResponse.json(
-        {
-          message: "کاربر پیدا نشد",
-        },
-        {
-          status: 401,
-        }
-      );
-    }
 
 
-    const user = users[0];
+try {
 
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      user.password_hash
-    );
+const body = await request.json();
 
 
-    if (!passwordMatch) {
-      return NextResponse.json(
-        {
-          message: "رمز عبور اشتباه است",
-        },
-        {
-          status: 401,
-        }
-      );
-    }
+const {
+  username,
+  password
+} = body;
 
 
-    return NextResponse.json({
-      message: "Login successful",
-      user: {
-        id: user.id,
-        username: user.username,
-        full_name: user.full_name,
-        role_id: user.role_id,
-      },
-    });
+
+if(!username || !password){
 
 
-  } catch (error) {
+return NextResponse.json(
 
-    console.error(error);
+{
+error:"Username and password are required"
+},
 
-    return NextResponse.json(
-      {
-        message: "Server error",
-      },
-      {
-        status: 500,
-      }
-    );
-  }
+{
+status:400
+}
+
+);
+
+
+}
+
+
+
+
+const users = await sql`
+
+SELECT
+
+u.id,
+u.username,
+u.password_hash,
+u.full_name,
+u.role_id,
+u.is_active
+
+FROM users u
+
+WHERE u.username=${username}
+
+LIMIT 1
+
+`;
+
+
+
+
+const user = users[0];
+
+
+
+
+if(!user){
+
+
+return NextResponse.json(
+
+{
+error:"Invalid username or password"
+},
+
+{
+status:401
+}
+
+);
+
+
+}
+
+
+
+
+
+if(!user.is_active){
+
+
+return NextResponse.json(
+
+{
+error:"User is inactive"
+},
+
+{
+status:403
+}
+
+);
+
+
+}
+
+
+
+
+
+const passwordValid = await bcrypt.compare(
+
+password,
+
+user.password_hash
+
+);
+
+
+
+
+if(!passwordValid){
+
+
+return NextResponse.json(
+
+{
+error:"Invalid username or password"
+},
+
+{
+status:401
+}
+
+);
+
+
+}
+
+
+
+
+const token = await createSession({
+
+id:user.id,
+
+username:user.username,
+
+role_id:user.role_id
+
+});
+
+
+
+
+
+const response = NextResponse.json(
+
+{
+
+message:"Login successful"
+
+}
+
+);
+
+
+
+
+
+response.cookies.set(
+
+"golden_session",
+
+token,
+
+{
+
+httpOnly:true,
+
+secure:false,
+
+sameSite:"lax",
+
+maxAge:60*60*8,
+
+path:"/"
+
+}
+
+);
+
+
+
+
+
+return response;
+
+
+
+}
+
+catch(error){
+
+
+console.error(error);
+
+
+
+return NextResponse.json(
+
+{
+error:"Server error"
+},
+
+{
+status:500
+}
+
+);
+
+
+}
+
+
 }

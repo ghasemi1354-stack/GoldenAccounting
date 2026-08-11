@@ -1,8 +1,15 @@
 import UserForm from "./UserForm";
 import { getRoles } from "@/lib/queries/users";
+import { requirePermission } from "@/lib/auth/guard";
 
 
 export default async function NewUserPage(){
+
+
+  await requirePermission(
+    "users.create"
+  );
+
 
 
   const roles = await getRoles();

@@ -1,88 +1,204 @@
-import { getProducts } from "@/lib/queries/products";
+import Link from "next/link";
+
+import {
+  getProducts,
+  getProductStats
+} from "@/lib/queries/products";
+
+import ProductStats from "@/components/products/ProductStats";
+import ProductTable from "@/components/products/ProductTable";
+import ProductSearch from "@/components/products/ProductSearch";
 
 
-export default async function ProductsPage() {
 
-  const products = await getProducts();
+export default async function ProductsPage({
+
+  searchParams,
+
+}: {
+
+  searchParams: Promise<{
+    search?: string;
+  }>;
+
+}) {
+
+
+
+  const params = await searchParams;
+
+
+
+  const search =
+    params.search || "";
+
+
+
+  const products =
+    await getProducts(search);
+
+
+
+  const stats =
+    await getProductStats();
+
+
+
 
 
   return (
-    <div>
 
-      <h1 className="text-2xl font-bold mb-6">
-        لیست کالاها
-      </h1>
+    <div className="space-y-8">
 
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
 
-        <table className="w-full">
+      {/* Header */}
 
-          <thead className="bg-zinc-100">
-
-            <tr>
-              <th className="p-3 text-right">
-                کد
-              </th>
-
-              <th className="p-3 text-right">
-                نام کالا
-              </th>
-
-              <th className="p-3 text-right">
-                دسته‌بندی
-              </th>
-
-              <th className="p-3 text-right">
-                قیمت خرید
-              </th>
-
-              <th className="p-3 text-right">
-                قیمت فروش
-              </th>
-
-            </tr>
-
-          </thead>
+      <div className="
+        bg-white
+        rounded-2xl
+        shadow-sm
+        border
+        p-6
+        flex
+        justify-between
+        items-center
+      ">
 
 
-          <tbody>
 
-          {products.map((product:any)=>(
-            
-            <tr key={product.id} className="border-t">
+        <div>
 
-              <td className="p-3">
-                {product.code}
-              </td>
 
-              <td className="p-3">
-                {product.name}
-              </td>
+          <h1 className="
+            text-3xl
+            font-bold
+            text-gray-800
+          ">
 
-              <td className="p-3">
-                {product.category_name}
-              </td>
+            مدیریت کالاها
 
-              <td className="p-3">
-                {product.purchase_price}
-              </td>
+          </h1>
 
-              <td className="p-3">
-                {product.sale_price}
-              </td>
 
-            </tr>
 
-          ))}
+          <p className="
+            text-gray-500
+            mt-2
+          ">
 
-          </tbody>
+            ثبت، ویرایش و مدیریت اطلاعات کالاهای سیستم
 
-        </table>
+          </p>
+
+
+        </div>
+
+
+
+
+
+        <Link
+
+          href="/dashboard/products/new"
+
+          className="
+            bg-blue-600
+            hover:bg-blue-700
+            shadow-md
+            shadow-blue-200
+            text-white
+            px-6
+            py-3
+            rounded-xl
+            transition-all
+            duration-200
+            flex
+            items-center
+            gap-2
+          "
+
+        >
+
+          <span className="text-xl">
+            +
+          </span>
+
+          ثبت کالای جدید
+
+
+        </Link>
+
+
 
       </div>
 
 
+
+
+
+
+      {/* Search */}
+
+      <div className="
+        bg-white
+        rounded-2xl
+        shadow-sm
+        border
+        p-5
+      ">
+
+
+        <ProductSearch />
+
+
+      </div>
+
+
+
+
+
+
+      {/* Stats */}
+
+      <ProductStats
+
+        stats={stats}
+
+      />
+
+
+
+
+
+
+
+      {/* Table */}
+
+      <div className="
+        bg-white
+        rounded-2xl
+        shadow-sm
+        border
+        overflow-hidden
+      ">
+
+
+        <ProductTable
+
+          products={products}
+
+        />
+
+
+      </div>
+
+
+
+
+
     </div>
+
   );
+
 }

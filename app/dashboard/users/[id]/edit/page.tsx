@@ -1,5 +1,6 @@
 import EditUserForm from "./EditUserForm";
 import { getRoles, getUserById } from "@/lib/queries/users";
+import { requirePermission } from "@/lib/auth/guard";
 
 
 export default async function EditUserPage({
@@ -9,24 +10,30 @@ export default async function EditUserPage({
 }: {
 
   params: Promise<{
-    id:string
+    id: string
   }>
 
 }) {
 
 
+  await requirePermission(
+    "users.edit"
+  );
+
+
+
   const resolvedParams = await params;
 
 
-  console.log("USER ID:", resolvedParams.id);
 
-
-
-  const id = Number(resolvedParams.id);
+  const id = Number(
+    resolvedParams.id
+  );
 
 
 
   if(Number.isNaN(id)){
+
 
     return (
 
@@ -38,20 +45,19 @@ export default async function EditUserPage({
 
     );
 
-  }
 
+  }
 
 
 
   const user = await getUserById(id);
 
-
   const roles = await getRoles();
 
 
 
-
   if(!user){
+
 
     return (
 
@@ -63,8 +69,8 @@ export default async function EditUserPage({
 
     );
 
-  }
 
+  }
 
 
 

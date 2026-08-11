@@ -14,7 +14,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
 
-  async function handleLogin(e: React.FormEvent) {
+
+  async function handleLogin(
+    e: React.FormEvent
+  ) {
 
     e.preventDefault();
 
@@ -22,37 +25,69 @@ export default function LoginPage() {
     setError("");
 
 
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    });
+    try {
 
 
-    const data = await res.json();
+      const res = await fetch(
+        "/api/auth/login",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":"application/json",
+          },
+
+          body:JSON.stringify({
+            username,
+            password,
+          }),
+
+        }
+      );
 
 
-    if (!res.ok) {
-      setError(data.message);
-      setLoading(false);
-      return;
+      const data = await res.json();
+
+
+
+      if(!res.ok){
+
+        setError(
+          data.error || "Login failed"
+        );
+
+        return;
+
+      }
+
+
+
+      router.replace("/dashboard");
+
+
+
     }
+    catch(error){
 
+      setError(
+        "خطا در ارتباط با سرور"
+      );
 
-    console.log(data);
+    }
+    finally{
 
-    router.push("/dashboard");
+      setLoading(false);
+
+    }
 
   }
 
 
+
   return (
-    <main className="min-h-screen flex items-center justify-center bg-zinc-100">
+
+    <main className="min-h-screen flex items-center justify-center bg-gray-100">
+
 
       <div className="bg-white p-8 rounded-xl shadow-md w-96">
 
@@ -62,46 +97,80 @@ export default function LoginPage() {
         </h1>
 
 
-        <form onSubmit={handleLogin}>
+
+        <form
+          onSubmit={handleLogin}
+          className="space-y-4"
+        >
+
 
 
           <input
-            className="w-full border p-3 rounded mb-4"
+
+            className="w-full border p-3 rounded"
+
             placeholder="نام کاربری"
+
             value={username}
-            onChange={(e)=>setUsername(e.target.value)}
+
+            onChange={
+              (e)=>setUsername(e.target.value)
+            }
+
           />
+
 
 
           <input
-            className="w-full border p-3 rounded mb-4"
+
+            className="w-full border p-3 rounded"
+
             placeholder="رمز عبور"
+
             type="password"
+
             value={password}
-            onChange={(e)=>setPassword(e.target.value)}
+
+            onChange={
+              (e)=>setPassword(e.target.value)
+            }
+
           />
+
 
 
           {
             error &&
-            <p className="text-red-600 mb-4 text-sm">
+
+            <p className="text-red-600 text-sm">
+
               {error}
+
             </p>
+
           }
 
 
+
           <button
+
             disabled={loading}
-            className="w-full bg-blue-600 text-white p-3 rounded"
+
+            className="w-full bg-blue-600 text-white p-3 rounded disabled:bg-gray-400"
+
           >
 
             {
               loading
-              ? "در حال ورود..."
-              : "ورود"
+              ?
+              "در حال ورود..."
+              :
+              "ورود"
             }
 
+
           </button>
+
 
 
         </form>
@@ -109,6 +178,9 @@ export default function LoginPage() {
 
       </div>
 
+
     </main>
+
   );
+
 }

@@ -1,11 +1,20 @@
 import Link from "next/link";
 import { getUsers } from "@/lib/queries/users";
+import { requirePermission } from "@/lib/auth/guard";
+import UserStatusButton from "@/components/UserStatusButton";
 
 
 export default async function UsersPage() {
 
 
+  await requirePermission(
+    "users.view"
+  );
+
+
+
   const users = await getUsers();
+
 
 
   return (
@@ -29,9 +38,7 @@ export default async function UsersPage() {
           className="bg-blue-600 text-white px-4 py-2 rounded"
 
         >
-
           افزودن کاربر
-
         </Link>
 
 
@@ -47,6 +54,7 @@ export default async function UsersPage() {
         <thead>
 
           <tr>
+
 
             <th className="p-3 text-right">
               نام کاربری
@@ -68,10 +76,16 @@ export default async function UsersPage() {
             </th>
 
 
+            <th className="p-3 text-right">
+              عملیات
+            </th>
+
+
           </tr>
 
 
         </thead>
+
 
 
 
@@ -105,10 +119,41 @@ export default async function UsersPage() {
 
               <td className="p-3">
 
-                {user.is_active
+                {
+                  user.is_active
                   ? "فعال"
                   : "غیرفعال"
                 }
+
+              </td>
+
+
+
+              <td className="p-3 flex gap-2">
+
+
+                <Link
+
+                  href={`/dashboard/users/${user.id}/edit`}
+
+                  className="bg-yellow-500 text-white px-3 py-1 rounded"
+
+                >
+
+                  ویرایش
+
+                </Link>
+
+
+
+                <UserStatusButton
+
+                  id={user.id}
+
+                  active={user.is_active}
+
+                />
+
 
               </td>
 
@@ -131,5 +176,6 @@ export default async function UsersPage() {
     </div>
 
   );
+
 
 }

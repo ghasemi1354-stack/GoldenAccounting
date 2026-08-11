@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 export default function UserForm({
   roles
 }:{
-  roles:any[];
+  roles:any;
 }){
 
 
@@ -21,6 +21,7 @@ const [roleId,setRoleId] = useState("");
 
 const [loading,setLoading] = useState(false);
 const [error,setError] = useState("");
+
 
 
 
@@ -75,28 +76,21 @@ return;
 
 router.push("/dashboard/users");
 
-
 }
+
 
 
 
 return (
 
-<form
-onSubmit={submit}
-className="bg-white p-6 rounded shadow space-y-4"
->
+<form onSubmit={submit} className="space-y-4">
 
 
-{error &&
-
-<div className="bg-red-100 text-red-700 p-3 rounded">
-
+{error && (
+<p className="text-red-600">
 {error}
-
-</div>
-
-}
+</p>
+)}
 
 
 
@@ -113,6 +107,24 @@ onChange={(e)=>setUsername(e.target.value)}
 required
 
 />
+
+
+
+
+<input
+
+className="w-full border p-3 rounded"
+
+placeholder="نام کامل"
+
+value={fullName}
+
+onChange={(e)=>setFullName(e.target.value)}
+
+required
+
+/>
+
 
 
 
@@ -134,21 +146,6 @@ required
 
 
 
-<input
-
-className="w-full border p-3 rounded"
-
-placeholder="نام کامل"
-
-value={fullName}
-
-onChange={(e)=>setFullName(e.target.value)}
-
-required
-
-/>
-
-
 
 <select
 
@@ -162,14 +159,18 @@ required
 
 >
 
+
 <option value="">
 انتخاب نقش
 </option>
 
 
-{roles.map(role=>(
+{roles.map((role:any)=>(
 
-<option key={role.id} value={role.id}>
+<option
+key={role.id}
+value={role.id}
+>
 
 {role.name}
 
@@ -191,7 +192,14 @@ className="bg-green-600 text-white px-6 py-3 rounded"
 
 >
 
-{loading ? "در حال ذخیره..." : "ثبت کاربر"}
+{
+loading
+?
+"در حال ذخیره..."
+:
+"ثبت کاربر"
+}
+
 
 </button>
 
@@ -200,6 +208,5 @@ className="bg-green-600 text-white px-6 py-3 rounded"
 </form>
 
 );
-
 
 }
